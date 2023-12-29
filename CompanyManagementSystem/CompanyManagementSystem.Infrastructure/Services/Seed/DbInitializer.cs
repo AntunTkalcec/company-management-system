@@ -1,4 +1,5 @@
 ﻿using CompanyManagementSystem.Core.Interfaces.Seed;
+using CompanyManagementSystem.Infrastructure.Data.SeedData;
 using CompanyManagementSystem.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,19 +20,16 @@ public class DbInitializer(IServiceScopeFactory scopeFactory) : IDbInitializer
         using IServiceScope serviceScope = scopeFactory.CreateScope();
         using CompanyManagementSystemDBContext? context = serviceScope.ServiceProvider.GetService<CompanyManagementSystemDBContext>();
 
-        //AddIfEmpty(context.Users, DbSeeder.Users);
-        //AddIfEmpty(context.EventTypes, DbSeeder.EventTypes);
-        //AddIfEmpty(context.EventRepeatTypes, DbSeeder.EventRepeatTypes);
+        AddIfEmpty(context.Companies, DbSeeder.Companies);
 
-        //context.SaveChanges();
+        context.SaveChanges();
 
-        //AddIfEmpty(context.Events, DbSeeder.Events);
-        //AddIfEmpty(context.Friendships, DbSeeder.Friendships);
+        AddIfEmpty(context.Users, DbSeeder.Users);
 
         context?.SaveChanges();
     }
 
-    private void AddIfEmpty<T>(DbSet<T> set, IEnumerable<T> entities) where T : class
+    private static void AddIfEmpty<T>(DbSet<T> set, IEnumerable<T> entities) where T : class
     {
         if (!set.Any())
         {

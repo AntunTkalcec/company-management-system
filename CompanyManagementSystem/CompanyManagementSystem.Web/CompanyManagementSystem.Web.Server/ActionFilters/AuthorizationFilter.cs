@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CompanyManagementSystem.Core.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 
@@ -10,7 +11,7 @@ public class AuthorizationFilter : ActionFilterAttribute
     {
         ClaimsPrincipal httpUser = context.HttpContext.User;
 
-        if (!httpUser.Identity.IsAuthenticated) 
+        if (!httpUser.Identity.IsAuthenticated)
             context.Result = new ForbidResult();
 
         else base.OnActionExecuting(context);

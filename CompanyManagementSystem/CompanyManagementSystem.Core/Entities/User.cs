@@ -26,4 +26,19 @@ public class User : BaseEntity
     [Required]
     [StringLength(50)]
     public string Email { get; set; }
+
+    [Required]
+    public bool IsAdmin { get; set; }
+
+    public int? TimeOffCount { get; set; }
+
+    public double? Salary { get; set; }
+
+    [Required]
+    public bool IsOnLeave { get; set; } = false;
+
+    #region Relations
+    public int? CompanyId { get; set; }
+    public Company Company { get; set; }
+    #endregion
 }

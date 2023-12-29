@@ -3,8 +3,8 @@ using System.Text.Json.Serialization;
 using CompanyManagementSystem.Infrastructure.Authentication;
 using Microsoft.OpenApi.Models;
 using CompanyManagementSystem.Infrastructure.Extensions;
-using Microsoft.Net.Http.Headers;
 using CompanyManagementSystem.Core.Interfaces.Seed;
+using CompanyManagementSystem.Core.Exceptions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +16,8 @@ builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddLogging(_ => _.AddConsole());
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -64,7 +66,11 @@ builder.Services.RegisterServices();
 
 builder.Services.Configure<TokenDataConfiguration>(builder.Configuration.GetSection("TokenData"));
 
+builder.Services.AddExceptionHandler<AppExceptionHandler>();
+
 WebApplication app = builder.Build();
+
+app.UseExceptionHandler(_ => { });
 
 app.MapDefaultEndpoints();
 

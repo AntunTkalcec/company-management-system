@@ -1,5 +1,6 @@
 ﻿using CompanyManagementSystem.Core.Authentication;
 using CompanyManagementSystem.Core.DTOs.Base;
+using CompanyManagementSystem.Core.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace CompanyManagementSystem.Core.DTOs;
@@ -24,4 +25,18 @@ public class UserDTO : BaseDTO
     public string Password { get; set; }
 
     public AuthenticationInfo AuthenticationInfo { get; set; }
+
+    public bool IsAdmin { get; set; }
+
+    public int? TimeOffCount { get; set; }
+
+    public double? Salary { get; set; }
+
+    [Required]
+    public bool IsOnLeave { get; set; }
+
+    #region Relations
+    public int? CompanyId { get; set; }
+    public Company Company { get; set; }
+    #endregion
 }

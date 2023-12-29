@@ -2,6 +2,7 @@
 using CompanyManagementSystem.Core.Authentication;
 using CompanyManagementSystem.Core.DTOs;
 using CompanyManagementSystem.Core.Entities;
+using CompanyManagementSystem.Core.Exceptions;
 using CompanyManagementSystem.Core.Interfaces.Repositories.Base;
 using CompanyManagementSystem.Core.Interfaces.Services;
 using CompanyManagementSystem.Infrastructure.Authentication;
@@ -21,7 +22,7 @@ public class UserService(IBaseRepository<User> userRepository, IMapper mapper, I
     {
         if (!ValidateUser(entity))
         {
-            throw new Exception("Required fields cannot remain empty!");
+            throw new BadRequestException("Required fields cannot remain empty!");
         }
 
         entity.Password = HashHelper.Hash(entity.Email, entity.Password);
@@ -54,8 +55,7 @@ public class UserService(IBaseRepository<User> userRepository, IMapper mapper, I
     {
         UserDTO userDto = mapper.Map<UserDTO>(user);
 
-        List<Claim> claims = [ new Claim("UserId", user.Id.ToString()) ];
-
+        List<Claim> claims = [ new Claim("UserId", user.Id.ToString()), new Claim("IsAdmin", user.IsAdmin.ToString()) ];
 
         AuthenticationInfo authInfo = new()
         {
@@ -71,7 +71,7 @@ public class UserService(IBaseRepository<User> userRepository, IMapper mapper, I
     {
         if (!ValidateUser(entity))
         {
-            throw new Exception("Required fields cannot remain empty!");
+            throw new BadRequestException("Required fields cannot remain empty!");
         }
 
         User currentEntity = await userRepository.GetByIdAsync(id);

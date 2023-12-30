@@ -38,15 +38,14 @@ public class UserService(IBaseRepository<User> userRepository, IMapper mapper, I
 
     public async Task<List<UserDTO>> GetAllAsync()
     {
-        List<User> users = await userRepository.GetAllAsync();
+        List<User> users = await userRepository.GetAllAsync(_ => _.Company);
 
         return mapper.Map<List<UserDTO>>(users);
     }
 
     public async Task<UserDTO> GetByIdAsync(int id)
     {
-        User? user = await userRepository.Fetch()
-                .FirstOrDefaultAsync(u => u.Id == id);
+        User? user = await userRepository.GetByIdAsync(id, _ => _.Company);
 
         return mapper.Map<UserDTO>(user);
     }
@@ -77,7 +76,10 @@ public class UserService(IBaseRepository<User> userRepository, IMapper mapper, I
         User currentEntity = await userRepository.GetByIdAsync(id);
         entity.Password = currentEntity.Password;
 
-        await userRepository.UpdateAsync(mapper.Map<User>(entity));
+        User user = mapper.Map<User>(entity);
+        user.UpdatedAt = DateTime.UtcNow;
+
+        await userRepository.UpdateAsync(user);
     }
 
     public async Task<User?> UserValid(string emailOrUserName, string password)

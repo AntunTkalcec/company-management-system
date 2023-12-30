@@ -27,5 +27,9 @@ public static class DependencyContainer
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IBaseRepository<User>, UserRepository>();
+        services.AddScoped<ICompanyService, CompanyService>();
+        services.AddScoped<IRequestService, RequestService>();
+        services.AddScoped<IBaseRepository<Company>, CompanyRepository>();
+        services.AddScoped<IBaseRepository<Request>, RequestRepository>();
     }
 }

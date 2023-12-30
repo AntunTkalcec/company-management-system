@@ -12,13 +12,13 @@ public class GetUserByIdQuery(int id) : IRequest<UserDTO>
     public int Id { get; set; } = id;
 }
 
-public class GetUserByIdQueryHandler(ILogger<GetUserByIdQueryHandler> logger, IUserService userService, IMapper mapper) : IRequestHandler<GetUserByIdQuery, UserDTO>
+public class GetUserByIdQueryHandler(ILogger<GetUserByIdQueryHandler> logger, IUserService userService) : IRequestHandler<GetUserByIdQuery, UserDTO>
 {
     public async Task<UserDTO> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
 		try
 		{
-			return await userService.GetByIdAsync(request.Id) ?? throw new NotFoundException();
+			return await userService.GetByIdAsync(request.Id) ?? throw new NotFoundException("That user does not exist.");
 		}
 		catch (Exception ex)
 		{

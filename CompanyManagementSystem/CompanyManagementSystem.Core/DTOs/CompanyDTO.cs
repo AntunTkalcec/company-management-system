@@ -10,4 +10,6 @@ public class CompanyDTO : BaseDTO
     public string Name { get; set; }
 
     public byte[]? CompanyImage { get; set; }
+
+    public int PTO { get; set; }
 }

@@ -4,6 +4,6 @@ using CompanyManagementSystem.Infrastructure.Repositories.Base;
 
 namespace CompanyManagementSystem.Infrastructure.Repositories;
 
-public class UserRepository(CompanyManagementSystemDBContext context) : BaseRepository<User>(context)
+public class RequestRepository(CompanyManagementSystemDBContext context) : BaseRepository<Request>(context)
 {
 }

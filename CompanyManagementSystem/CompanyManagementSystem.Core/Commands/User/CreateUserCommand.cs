@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CompanyManagementSystem.Core.DTOs;
+﻿using CompanyManagementSystem.Core.DTOs;
 using CompanyManagementSystem.Core.Interfaces.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -11,15 +10,13 @@ public class CreateUserCommand(UserDTO userDto) : IRequest<int>
     public UserDTO UserDto { get; set; } = userDto;
 }
 
-public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, IUserService userService, IMapper mapper) : IRequestHandler<CreateUserCommand, int>
+public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, IUserService userService) : IRequestHandler<CreateUserCommand, int>
 {
     public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        UserDTO userDto = request.UserDto;
-
 		try
 		{
-			return await userService.CreateAsync(userDto);
+			return await userService.CreateAsync(request.UserDto);
 		}
 		catch (Exception ex)
 		{

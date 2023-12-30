@@ -9,7 +9,8 @@ public static class DbSeeder
         [
             new Company 
             {
-                Name = "Facebook"
+                Name = "Facebook",
+                PTO = 24
             }
         ];
 
@@ -22,6 +23,7 @@ public static class DbSeeder
                 FirstName = "Mark",
                 LastName = "Zuckerberg",
                 Email = "zuck@gmail.com",
+                IsAdmin = true,
                 CompanyId = 1
             },
             new User

@@ -12,8 +12,10 @@ public class AutoMapperProfile : Profile
             .ForMember(_ => _.Password, opt => opt.Ignore());
         CreateMap<UserDTO, User>();
 
-        CreateMap<Company, CompanyDTO>();
-        CreateMap<CompanyDTO, Company>();
+        CreateMap<Company, CompanyDTO>()
+            .ForMember(_ => _.PTO, opt => opt.MapFrom(_ => _.PTO));
+        CreateMap<CompanyDTO, Company>()
+            .ForMember(_ => _.PTO, opt => opt.MapFrom(_ => _.PTO));
 
         CreateMap<Request, RequestDTO>()
             .ForMember(_ => _.RequestType, opt => opt.MapFrom(_ => (int)_.RequestType));

@@ -14,6 +14,7 @@ public class AppExceptionHandler(ILogger<AppExceptionHandler> logger) : IExcepti
             ForbidException => ((int)HttpStatusCode.Forbidden, "You do not have access to that."),
             BadRequestException badRequestException => ((int)HttpStatusCode.BadRequest, badRequestException.Message),
             NotFoundException notFoundException => ((int)HttpStatusCode.NotFound, notFoundException.Message),
+            NotPartOfCompanyException notPartOfCompanyException => ((int)HttpStatusCode.PreconditionFailed, notPartOfCompanyException.Message),
             _ => ((int)HttpStatusCode.InternalServerError, "Something went wrong.")
         };
 

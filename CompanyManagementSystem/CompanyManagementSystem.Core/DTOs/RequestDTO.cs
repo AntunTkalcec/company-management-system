@@ -15,6 +15,7 @@ public class RequestDTO : BaseDTO
 
     #region Relations
     public int CreatorId { get; set; }
+
     public User Creator { get; set; }
     #endregion
 }

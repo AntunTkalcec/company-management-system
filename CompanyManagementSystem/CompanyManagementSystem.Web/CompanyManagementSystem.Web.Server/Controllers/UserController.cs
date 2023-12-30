@@ -31,4 +31,30 @@ public class UserController(IMediator mediator) : BaseController
     {
         return CreatedAtAction(nameof(Post), await mediator.Send(new CreateUserCommand(userDTO), cancellationToken));
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Put(int id, UserDTO userDTO, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new UpdateUserCommand(id, userDTO), cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    //[AdminFilter()]
+    public async Task<ActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new DeleteUserCommand(id), cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPatch("{id}")]
+    //[AdminFilter()]
+    public async Task<ActionResult> SetAdmin(int id, CancellationToken cancellationToken)
+    {
+        await mediator.Send(new SetUserAsAdminCommand(id), cancellationToken);
+
+        return NoContent();
+    }
 }

@@ -11,6 +11,7 @@ public class AdminFilter : ActionFilterAttribute
         ClaimsPrincipal httpUser = context.HttpContext.User;
 
         Claim? isAdmin = httpUser.Claims.SingleOrDefault(_ => _.Type == "IsAdmin");
+
         if (isAdmin is null)
             context.Result = new ForbidResult();
         

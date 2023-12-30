@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "companymanagementsystem.web.client": {
+    "CompanyManagementSystem.UI": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -11,11 +11,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/companymanagementsystem.web.client",
+            "outputPath": "dist/company-management-system.ui",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -46,12 +46,9 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -60,21 +57,18 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "companymanagementsystem.web.client:build:production"
+              "buildTarget": "CompanyManagementSystem.UI:build:production"
             },
             "development": {
-              "buildTarget": "companymanagementsystem.web.client:build:development"
+              "buildTarget": "CompanyManagementSystem.UI:build:development"
             }
           },
-          "defaultConfiguration": "development",
-          "options": {
-            "proxyConfig": "src/proxy.conf.js"
-          }
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "companymanagementsystem.web.client:build"
+            "buildTarget": "CompanyManagementSystem.UI:build"
           }
         },
         "test": {
@@ -92,8 +86,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
-            "karmaConfig": "karma.conf.js"
+            "scripts": []
           }
         }
       }

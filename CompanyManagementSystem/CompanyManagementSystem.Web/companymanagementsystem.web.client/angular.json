@@ -60,10 +60,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "companymanagementsystem.web.client:build:production"
+              "buildTarget": "companymanagementsystem.web.client:build:production"
             },
             "development": {
-              "browserTarget": "companymanagementsystem.web.client:build:development"
+              "buildTarget": "companymanagementsystem.web.client:build:development"
             }
           },
           "defaultConfiguration": "development",
@@ -74,7 +74,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "companymanagementsystem.web.client:build"
+            "buildTarget": "companymanagementsystem.web.client:build"
           }
         },
         "test": {

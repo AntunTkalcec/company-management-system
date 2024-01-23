@@ -1,10 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-login-modal',
   standalone: true,
-  imports: [],
+  imports: [MatFormFieldModule, MatInputModule, MatButtonModule],
   templateUrl: './login-modal.component.html',
   styleUrl: './login-modal.component.css'
 })

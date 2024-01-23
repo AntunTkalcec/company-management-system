@@ -1,4 +1,4 @@
-<div class="card mx-auto shadow-lg p-3 mb-5 bg-body rounded w-md" style="width: 33%;">
+<!-- <div class="card mx-auto shadow-lg p-3 mb-5 bg-body rounded w-md" style="width: 33%;">
     <div class="card-header bg-primary text-white fw-bold">Sign In</div>
 
     <div class="card-body">
@@ -10,5 +10,37 @@
                 <label for="emailOrUsername">Email or username</label>
             </div>
         </form>
+    </div>
+</div> -->
+
+<div class="border">
+    <div class="top-border">
+        <div class="header">
+            Sign In
+        </div>
+    </div>
+
+    <div class="body">
+        <div class="title">
+            Company Management System Login
+        </div>
+
+        <form (submit)="onSubmit()">
+            <mat-form-field>
+                <mat-label>Username or email</mat-label>
+                <input matInput #input placeholder="person@email.com">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matInput>
+            </mat-form-field>
+        </form>
+    </div>
+
+    <div class="footer">
+        <div class="divider"></div>
+
+        <a href="" target="_blank">Don't have an account? Register now</a>
+        <button mat-raised-button color="primary">Sign In</button>
     </div>
 </div>

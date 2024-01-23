@@ -1,3 +1,7 @@
-.background {
+.container-fluid {
+    display: grid;
+    height: 100%;
+    width: 100%;
     background-image: url('/assets/images/background.jpg');
+    place-items: center;
 }

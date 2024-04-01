@@ -1,3 +1,2 @@
-<div class="container-fluid">
-    <app-login-modal></app-login-modal>
-</div>
+<cms-login-modal (loginFormEmitter)="loginUser($event)" (registerFormEmitter)="registerUser($event)" [loggingIn]="loggingIn" [logIn]="logIn" [registering]="registering"
+ (clearMsg)="clearMsg($event)" [errorMsg]="errorMsg"></cms-login-modal>

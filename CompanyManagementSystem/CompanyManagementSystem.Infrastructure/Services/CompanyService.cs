@@ -35,7 +35,7 @@ public class CompanyService(IBaseRepository<Company> companyRepository, IMapper 
 
     public async Task<CompanyDTO> GetByIdAsync(int id)
     {
-        Company? company = await companyRepository.GetByIdAsync(id);
+        Company? company = await companyRepository.GetByIdAsync(id, _ => _.Staff);
 
         return mapper.Map<CompanyDTO>(company);
     }

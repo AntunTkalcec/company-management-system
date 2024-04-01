@@ -1,0 +1,197 @@
+<div class="container-fluid vh-100 align-items-center d-flex justify-content-center"
+  style="background-image: url('/assets/images/background.jpg'); background-size: cover; background-position: center center;">
+  @if (logIn) {
+
+  <div class="col-lg-6 col-md-9 col-sm-12 text-center">
+    <div class="card mx-auto shadow-lg p-3 mb-5 bg-body rounded">
+      <div class="card-header bg-primary text-white fw-bold">
+        Sign In to CMS
+      </div>
+
+      <div class="card-body">
+        <h5 class="card-title mb-3">Welcome back!</h5>
+
+        <form class="my-4" (submit)="onLoginSubmit()" [formGroup]="loginForm">
+          <div class="form-group mb-2">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="emailOrUsername" name="emailOrUsername"
+                placeholder="Enter email or username" formControlName="emailOrUsername">
+              <label for="emailOrUsername" class="form-label">
+                Email or username
+              </label>
+
+              @if (loginForm.controls['emailOrUsername'].hasError('required') &&
+              (loginForm.controls['emailOrUsername'].dirty || loginForm.controls['emailOrUsername'].touched))
+              {
+              <p class="text-danger">Email or username is required</p>
+              }
+
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-floating">
+              <input type="password" class="form-control" id="userpassword" name="password" placeholder="Enter password"
+                formControlName="password" (keyup)="onType()">
+              <label for="userpassword" class="form-label">Password</label>
+
+              @if (loginForm.controls['password'].hasError('required') &&
+              (loginForm.controls['password'].dirty || loginForm.controls['password'].touched))
+              {
+              <p class="text-danger">Password is required</p>
+              }
+
+            </div>
+          </div>
+
+          <div class="form-group row mb-3 justify-content-center">
+            <div class="col-6 mt-4">
+
+              @if (!loggingIn)
+              {
+                @if (errorMsg){
+                  <p class="text-danger mt-2">{{errorMsg}}</p>
+                }
+
+              <button class="btn btn-primary w-100" type="submit" [disabled]="(!loginForm.valid)">Sign in</button>
+              }
+              @else {
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              }
+
+            </div>
+          </div>
+
+          <div>
+            <div class="card-text">Not registered yet?</div>
+            <button class="btn btn-secondary" type="button" (click)="onRegister()">Register now</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  }
+
+  @else {
+
+  <div class="col-lg-6 col-md-9 col-sm-12 text-center">
+    <div class="card mx-auto shadow-lg p-3 mb-5 bg-body rounded">
+      <div class="card-header bg-primary text-white fw-bold">
+        Register with CMS
+      </div>
+
+      <div class="card-body">
+        <h5 class="card-title mb-3">Welcome!</h5>
+
+        <form class="my-4" (submit)="onRegisterSubmit()" [formGroup]="registerForm">
+          <div class="form-group mb-2">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="firstName" name="firstName"
+                placeholder="Enter first name" formControlName="firstName">
+              <label for="firstName" class="form-label">
+                First name
+              </label>
+
+              @if (registerForm.controls['firstName'].hasError('required') &&
+              (registerForm.controls['firstName'].dirty || registerForm.controls['firstName'].touched))
+              {
+              <p class="text-danger">First name is required</p>
+              }
+
+            </div>
+          </div>
+
+          <div class="form-group mb-2">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="lastName" name="lastName"
+                placeholder="Enter last name" formControlName="lastName">
+              <label for="lastName" class="form-label">
+                Last name
+              </label>
+
+              @if (registerForm.controls['lastName'].hasError('required') &&
+              (registerForm.controls['lastName'].dirty || registerForm.controls['lastName'].touched))
+              {
+              <p class="text-danger">Last name is required</p>
+              }
+
+            </div>
+          </div>
+
+          <div class="form-group mb-2">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="email" name="email"
+                placeholder="Enter email" formControlName="email">
+              <label for="email" class="form-label">
+                Email
+              </label>
+
+              @if (registerForm.controls['email'].hasError('required') &&
+              (registerForm.controls['email'].dirty || registerForm.controls['email'].touched))
+              {
+              <p class="text-danger">Email is required</p>
+              }
+
+            </div>
+          </div>
+
+          <div class="form-group mb-2">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="username" name="username"
+                placeholder="Enter username" formControlName="username">
+              <label for="username" class="form-label">
+                Username
+              </label>
+
+              @if (registerForm.controls['username'].hasError('required') &&
+              (registerForm.controls['username'].dirty || registerForm.controls['username'].touched))
+              {
+              <p class="text-danger">Username is required</p>
+              }
+
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-floating">
+              <input type="password" class="form-control" id="userpassword" name="password" placeholder="Enter password"
+                formControlName="password" (keyup)="onType()">
+              <label for="userpassword" class="form-label">Password</label>
+
+              @if (registerForm.controls['password'].hasError('required') &&
+              (registerForm.controls['password'].dirty || registerForm.controls['password'].touched))
+              {
+              <p class="text-danger">Password is required</p>
+              }
+
+            </div>
+          </div>
+
+          <div class="form-group row mb-3 justify-content-center">
+            <div class="col-6 mt-4">
+
+              @if (!registering)
+              {
+              <button class="btn btn-primary w-100" type="submit" [disabled]="(!registerForm.valid)">Register</button>
+              }
+              @else {
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              }
+
+            </div>
+          </div>
+
+          <div>
+            <div class="card-text">Already registered?</div>
+            <button class="btn btn-secondary" type="button" (click)="onLogin()">Sign in</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  }
+</div>

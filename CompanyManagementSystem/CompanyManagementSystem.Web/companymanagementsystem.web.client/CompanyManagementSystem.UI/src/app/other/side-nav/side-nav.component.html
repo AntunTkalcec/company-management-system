@@ -1,0 +1,56 @@
+<nav id="sidebarMenu" class="col-md-3 col-xl-2 d-md-block bg-primary-subtle sidebar collapse"
+  [ngClass]="{'show': isSidebarOpen}">
+  <div class="position-sticky pt-3">
+    <a [routerLink]="['']"
+      class="row w-100 align-items-center justify-content-center text-decoration-none text-dark link text-center"
+      routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <div class="col-2">
+        <i class="bi bi-clipboard-data fs-4"></i>
+      </div>
+      <div class="col-10 fs-5 text-lg-start text-center">
+        Dashboard
+      </div>
+    </a>
+
+    <hr>
+
+    <div>
+      <div class="row w-100 align-items-center justify-content-center text-center">
+        <div class="col-2">
+          <i class="bi bi-building fs-4"></i>
+        </div>
+        <div class="col-10 fs-5 text-lg-start text-center">
+          Company
+        </div>
+      </div>
+
+      <div class="p-3">
+        <a [routerLink]="['/staff']"
+          class="row w-100 align-items-center justify-content-center text-decoration-none text-dark link text-center"
+          routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <div class="col-12">
+            <i class="bi bi-people fs-5"></i>
+          </div>
+          <div class="col-12 fs-6">
+            Staff
+          </div>
+        </a>
+
+        <a [routerLink]="['/pto']"
+          class="row w-100 align-items-center justify-content-center text-decoration-none text-dark link text-center"
+          routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <div class="col-12">
+            <i class="bi bi-duffle-fill fs-5"></i>
+          </div>
+          <div class="col-12 fs-6">
+            PTO requests
+          </div>
+        </a>
+      </div>
+
+      <hr>
+
+    </div>
+
+  </div>
+</nav>

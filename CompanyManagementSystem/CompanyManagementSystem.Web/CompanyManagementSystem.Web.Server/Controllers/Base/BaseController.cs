@@ -8,7 +8,7 @@ public class BaseController : ControllerBase
     {
         get
         {
-            _ = int.TryParse(User.Claims.FirstOrDefault(t => t.Type == "UserId")?.Value, out int userId);
+            _ = int.TryParse(User.Claims.SingleOrDefault(t => t.Type == "UserId")?.Value, out int userId);
             return userId;
         }
     }

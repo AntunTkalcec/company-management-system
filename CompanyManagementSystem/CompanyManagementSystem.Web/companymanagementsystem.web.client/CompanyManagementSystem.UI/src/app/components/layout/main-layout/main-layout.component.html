@@ -1,1 +1,7 @@
-<p>main-layout works!</p>
+<cms-nav-bar (toggleSidebar)="toggleSidebar()"></cms-nav-bar>
+<div class="container-fluid">
+    <div class="row">
+        <cms-side-nav [isSidebarOpen]="isSidebarOpen"></cms-side-nav>
+        <router-outlet></router-outlet>
+    </div>
+</div>

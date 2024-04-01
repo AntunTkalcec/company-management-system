@@ -1,5 +1,6 @@
 ﻿using CompanyManagementSystem.Core.Commands.User;
 using CompanyManagementSystem.Core.DTOs;
+using CompanyManagementSystem.Core.DTOs.Input;
 using CompanyManagementSystem.Web.Server.ActionFilters;
 using CompanyManagementSystem.Web.Server.Controllers.Base;
 using MediatR;
@@ -27,9 +28,9 @@ public class UserController(IMediator mediator) : BaseController
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post(UserDTO userDTO, CancellationToken cancellationToken)
+    public async Task<ActionResult> Post(RegisterInputModel registerInputModel, CancellationToken cancellationToken)
     {
-        return CreatedAtAction(nameof(Post), await mediator.Send(new CreateUserCommand(userDTO), cancellationToken));
+        return CreatedAtAction(nameof(Post), await mediator.Send(new CreateUserCommand(registerInputModel), cancellationToken));
     }
 
     [HttpPut("{id}")]

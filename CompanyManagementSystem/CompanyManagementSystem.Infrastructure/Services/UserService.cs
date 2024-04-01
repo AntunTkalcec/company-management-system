@@ -13,7 +13,7 @@ using System.Security.Claims;
 
 namespace CompanyManagementSystem.Infrastructure.Services;
 
-public class UserService(IBaseRepository<User> userRepository, IMapper mapper, ITokenService tokenService,
+public class UserService(IBaseRepository<User> userRepository, IBaseRepository<Company> companyRepository, IMapper mapper, ITokenService tokenService,
             IOptions<TokenDataConfiguration> tokenDataConfiguration) : IUserService
 {
     private readonly TokenDataConfiguration _tokenDataConfiguration = tokenDataConfiguration.Value ?? throw new Exception("TokenDataConfiguration is null.");
@@ -85,10 +85,14 @@ public class UserService(IBaseRepository<User> userRepository, IMapper mapper, I
     public async Task<User?> UserValid(string emailOrUserName, string password)
     {
         string currentEmailOrUserName = emailOrUserName.ToLower();
-        User? user = await userRepository.Fetch().AsNoTracking().Where(user => user.Email == currentEmailOrUserName
-            || user.UserName == currentEmailOrUserName).SingleOrDefaultAsync();
 
-        if (user is not null && user.Password == HashHelper.Hash(user.Email, password)) 
+        User? user = await userRepository
+            .Fetch()
+            .AsNoTracking()
+            .SingleOrDefaultAsync(user => user.Email == currentEmailOrUserName
+            || user.UserName == currentEmailOrUserName);
+
+        if (user is not null && user.Password == HashHelper.Hash(user.Email, password))
             return user;
 
         return null;

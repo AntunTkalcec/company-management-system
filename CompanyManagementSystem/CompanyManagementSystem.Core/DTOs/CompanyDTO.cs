@@ -12,4 +12,8 @@ public class CompanyDTO : BaseDTO
     public byte[]? CompanyImage { get; set; }
 
     public int PTO { get; set; }
+
+    #region Relations
+    public List<UserDTO> Staff { get; set; }
+    #endregion
 }

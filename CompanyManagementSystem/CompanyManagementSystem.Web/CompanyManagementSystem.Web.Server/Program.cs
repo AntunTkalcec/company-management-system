@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using CompanyManagementSystem.Infrastructure.Extensions;
 using CompanyManagementSystem.Core.Interfaces.Seed;
 using CompanyManagementSystem.Core.Exceptions;
+using Microsoft.Net.Http.Headers;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -84,10 +85,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseCors(policy =>
-//    policy.WithOrigins("http://localhost:7264", "https://localhost:7264")
-//    .AllowAnyMethod()
-//    .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization));
+app.UseCors(policy =>
+    policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+    .AllowAnyMethod()
+    .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization));
 
 app.UseRouting();
 

@@ -1,1 +1,50 @@
-<p>home works!</p>
+<main class="col-md-9 ms-sm-auto col-xl-10 px-md-4">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="text-primary">Dashboard</h1>
+  </div>
+
+  <div class="row align-content-center mx-1 column-gap-3">
+    @if (!company) {
+    <cms-loading-animation></cms-loading-animation>
+    } @else {
+    <div class="col border border-secondary border-2 rounded-2 fw-bold">
+      <div class="row p-2 align-items-center justify-content-between">
+        <div class="col fs-4">My company</div>
+        <a href="#" (click)="navigateToCompanyDetails()" class="col text-end fw-medium pt-2">Details</a>
+      </div>
+
+      <hr />
+
+      <div class="row pb-4 px-2">
+        <div class="col">
+          <div>Name: {{ company.name }}</div>
+
+          <div>Number of employees: {{company.staff.length}}</div>
+        </div>
+        <div class="col text-end">
+          @if (company.companyImage) {
+            <div>
+              {{ company.companyImage }}
+            </div>
+            } @else {
+            <img
+              src="assets/images/unknowncompany.png"
+              alt="unknowncompany"
+              class="img-fluid companyimg"
+            />
+            }
+        </div>
+      </div>
+    </div>
+
+    <div class="col border border-secondary border-2 rounded-2 fw-bold">
+      <div class="row p-2 align-items-center justify-content-between">
+        <div class="col fs-4">Staff information</div>
+        <a href="#" class="col text-end fw-medium pt-2">Details</a>
+      </div>
+
+      <hr />
+    </div>
+    }
+  </div>
+</main>

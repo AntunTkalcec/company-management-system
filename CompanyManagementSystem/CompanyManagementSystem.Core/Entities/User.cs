@@ -40,5 +40,7 @@ public class User : BaseEntity
     #region Relations
     public int? CompanyId { get; set; }
     public Company Company { get; set; }
+
+    public virtual ICollection<Request> Requests { get; set; }
     #endregion
 }

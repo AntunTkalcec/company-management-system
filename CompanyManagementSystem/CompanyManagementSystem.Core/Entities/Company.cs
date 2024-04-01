@@ -14,4 +14,8 @@ public class Company : BaseEntity
     public byte[]? CompanyImage { get; set; }
 
     public int PTO { get; set; }
+
+    #region Relations
+    public virtual ICollection<User> Staff { get; set; }
+    #endregion
 }

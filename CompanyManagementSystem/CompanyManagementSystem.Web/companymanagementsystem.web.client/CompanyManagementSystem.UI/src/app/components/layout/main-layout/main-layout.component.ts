@@ -1,12 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { NavBarComponent } from '../../../other/nav-bar/nav-bar.component';
+import { RouterOutlet } from '@angular/router';
+import { SideNavComponent } from '../../../other/side-nav/side-nav.component';
 
 @Component({
-  selector: 'app-main-layout',
+  selector: 'cms-main-layout',
   standalone: true,
-  imports: [],
+  imports: [NavBarComponent, RouterOutlet, SideNavComponent],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.css'
+  styleUrls: ['./main-layout.component.scss'],
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
+  isSidebarOpen = false;
 
+  constructor() {}
+
+  ngOnInit() {}
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
 }

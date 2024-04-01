@@ -37,6 +37,8 @@ public class UserDTO : BaseDTO
 
     #region Relations
     public int? CompanyId { get; set; }
-    public Company Company { get; set; }
+    public CompanyDTO Company { get; set; }
+
+    public List<RequestDTO> Requests { get; set; }
     #endregion
 }

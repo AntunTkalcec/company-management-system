@@ -19,7 +19,7 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         {
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex)
+        catch (Exception _)
         {
             throw new HttpResponseException(HttpStatusCode.InternalServerError);
         }
@@ -72,12 +72,7 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
 
     public async Task DeleteAsync(int id)
     {
-        T? entity = _entities.Where(i => i.Id == id).FirstOrDefault();
-
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(id), "Couldn't find entity with given id.");
-        }
+        T? entity = _entities.Find(id) ?? throw new ArgumentNullException(nameof(id), "Couldn't find entity with given id.");
 
         _entities.Remove(entity);
 

@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace CompanyManagementSystem.Web.Server.Controllers;
 
-[Route("api/v1/[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class AuthenticationController(IUserService userService, ITokenService tokenService, IAuthenticationService authenticationService) : BaseController
 {

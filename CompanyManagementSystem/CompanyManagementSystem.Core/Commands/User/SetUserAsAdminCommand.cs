@@ -1,33 +1,40 @@
 ﻿using CompanyManagementSystem.Core.DTOs;
-using CompanyManagementSystem.Core.Exceptions;
 using CompanyManagementSystem.Core.Interfaces.Services;
+using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace CompanyManagementSystem.Core.Commands.User;
 
-public class SetUserAsAdminCommand(int id) : IRequest
+public class SetUserAsAdminCommand(int id) : IRequest<ErrorOr<Updated>>
 {
     public int Id { get; set; } = id;
 }
 
-public class SetUserAsAdminCommandHandler(ILogger<SetUserAsAdminCommandHandler> logger, IUserService userService) : IRequestHandler<SetUserAsAdminCommand>
+public class SetUserAsAdminCommandHandler(ILogger<SetUserAsAdminCommandHandler> logger, IUserService userService) : IRequestHandler<SetUserAsAdminCommand, ErrorOr<Updated>>
 {
-    public async Task Handle(SetUserAsAdminCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Updated>> Handle(SetUserAsAdminCommand request, CancellationToken cancellationToken)
     {
-		try
-		{
-			UserDTO user = await userService.GetByIdAsync(request.Id) ?? throw new NotFoundException("That user does not exist.");
+        try
+        {
+            ErrorOr<UserDTO> userResult = await userService.GetByIdAsync(request.Id);
 
-			user.IsAdmin = true;
+            if (userResult.IsError)
+            {
+                logger.LogError("User with id '{id}' was not found!", request.Id);
 
-			await userService.UpdateAsync(user.Id, user);
+                return userResult.Errors;
+            }
+
+            userResult.Value.IsAdmin = true;
+
+            return await userService.UpdateAsync(userResult.Value.Id, userResult.Value);
         }
         catch (Exception ex)
-		{
-			logger.LogError("Something went wrong setting a user as admin: {ex}", ex.Message);
+        {
+            logger.LogError("Something went wrong setting a user as admin: {ex}", ex.Message);
 
-			throw;
-		}
+            return ErrorPartials.Unexpected.InternalServerError();
+        }
     }
 }

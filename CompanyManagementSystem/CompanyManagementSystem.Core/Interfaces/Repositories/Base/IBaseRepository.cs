@@ -1,4 +1,5 @@
 ﻿using CompanyManagementSystem.Core.Entities.Base;
+using ErrorOr;
 using System.Linq.Expressions;
 
 namespace CompanyManagementSystem.Core.Interfaces.Repositories.Base;
@@ -11,15 +12,13 @@ public interface IBaseRepository<T> where T : BaseEntity
 
     Task AddRangeAsync(ICollection<T> entities);
 
-    Task<T> AddOrUpdateAsync(T entity);
+    Task<ErrorOr<Deleted>> DeleteAsync(T entity);
 
-    Task DeleteAsync(T entity);
-
-    Task DeleteAsync(int id);
+    Task<ErrorOr<Deleted>> DeleteAsync(int id);
 
     Task DeleteAllAsync(List<T> entities);
 
-    Task<T> UpdateAsync(T entity);
+    Task<ErrorOr<Updated>> UpdateAsync(T entity);
 
     Task UpdateRangeAsync(ICollection<T> entities);
 

@@ -6,11 +6,12 @@ namespace CompanyManagementSystem.Core.DTOs;
 public class CompanyDTO : BaseDTO
 {
     [Required]
-    [StringLength(100)]
+    [Length(2, 100)]
     public string Name { get; set; }
 
     public byte[]? CompanyImage { get; set; }
 
+    [Required]
     public int PTO { get; set; }
 
     #region Relations

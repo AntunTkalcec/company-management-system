@@ -1,7 +1,9 @@
 ﻿using CompanyManagementSystem.Core.Entities.Base;
 using CompanyManagementSystem.Core.Interfaces.Repositories.Base;
 using CompanyManagementSystem.Infrastructure.Database;
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Net;
 using System.Web.Http;
@@ -35,20 +37,6 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         return result;
     }
 
-    public async Task<T> AddOrUpdateAsync(T entity)
-    {
-        _ = entity ?? throw new ArgumentNullException(nameof(entity), "Entity cannot be null");
-
-        if (entity.Id is 0)
-        {
-            return await AddAsync(entity);
-        }
-        else
-        {
-            return await UpdateAsync(entity);
-        }
-    }
-
     public async Task AddRangeAsync(ICollection<T> entities)
     {
         _ = entities ?? throw new ArgumentNullException(nameof(entities), "List of entities cannot be null");
@@ -63,20 +51,29 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         await SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(T entity)
+    public async Task<ErrorOr<Deleted>> DeleteAsync(T entity)
     {
-        _ = entity ?? throw new ArgumentNullException(nameof(entity), "Entity cannot be null");
+        if (entity is null)
+        {
+            return ErrorPartials.Generic.EntityIsNull($"The '{nameof(T)}' entity cannot be null.");
+        }
 
-        await DeleteAsync(entity.Id);
+        return await DeleteAsync(entity.Id);
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task<ErrorOr<Deleted>> DeleteAsync(int id)
     {
         T? entity = _entities.Find(id) ?? throw new ArgumentNullException(nameof(id), "Couldn't find entity with given id.");
 
-        _entities.Remove(entity);
+        if (entity is null)
+        {
+            return ErrorPartials.Generic.EntityNotFound($"Couldn't find '{nameof(T)}' entity with given id.");
+        }
 
+        _entities.Remove(entity);
         await SaveChangesAsync();
+
+        return Result.Deleted;
     }
 
     public IQueryable<T> Fetch()
@@ -94,23 +91,21 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         return await FirstAsync(x => x.Id == id, includes);
     }
 
-    public async Task<T> UpdateAsync(T entity)
+    public async Task<ErrorOr<Updated>> UpdateAsync(T entity)
     {
         _ = entity ?? throw new ArgumentNullException(nameof(entity), "Entity cannot be null");
 
         T? existing = await _context.Set<T>().FindAsync(entity.Id);
 
-        if (existing is not null)
+        if (existing is null)
         {
-            _context.Entry(existing).CurrentValues.SetValues(entity);
-            await SaveChangesAsync();
-        }
-        else
-        {
-            throw new InvalidOperationException("Entity does not exist");
+            return ErrorPartials.Generic.EntityNotFound($"{nameof(T)} with id '{entity.Id}' does not exist.");
         }
 
-        return existing;
+        _context.Entry(existing).CurrentValues.SetValues(entity);
+        await SaveChangesAsync();
+
+        return Result.Updated;
     }
 
     public async Task UpdateRangeAsync(ICollection<T> entities)

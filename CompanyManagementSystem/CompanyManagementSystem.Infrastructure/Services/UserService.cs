@@ -7,6 +7,7 @@ using CompanyManagementSystem.Core.Interfaces.Repositories.Base;
 using CompanyManagementSystem.Core.Interfaces.Services;
 using CompanyManagementSystem.Infrastructure.Authentication;
 using CompanyManagementSystem.Infrastructure.Helpers;
+using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -31,9 +32,9 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
         return entity.Id;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task<ErrorOr<Deleted>> DeleteAsync(int id)
     {
-        await userRepository.DeleteAsync(id);
+        return await userRepository.DeleteAsync(id);
     }
 
     public async Task<List<UserDTO>> GetAllAsync()
@@ -43,9 +44,14 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
         return mapper.Map<List<UserDTO>>(users);
     }
 
-    public async Task<UserDTO> GetByIdAsync(int id)
+    public async Task<ErrorOr<UserDTO>> GetByIdAsync(int id)
     {
         User? user = await userRepository.GetByIdAsync(id, _ => _.Company);
+
+        if (user is null)
+        {
+            return ErrorPartials.User.UserNotFound($"User with id '{id}' not found!");
+        }
 
         return mapper.Map<UserDTO>(user);
     }
@@ -54,7 +60,11 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
     {
         UserDTO userDto = mapper.Map<UserDTO>(user);
 
-        List<Claim> claims = [ new Claim("UserId", user.Id.ToString()), new Claim("IsAdmin", user.IsAdmin.ToString()) ];
+        List<Claim> claims =
+        [
+            new Claim("UserId", user.Id.ToString()),
+            new Claim("IsAdmin", user.IsAdmin.ToString())
+        ];
 
         AuthenticationInfo authInfo = new()
         {
@@ -66,31 +76,36 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
         return userDto;
     }
 
-    public async Task UpdateAsync(int id, UserDTO entity)
+    public async Task<ErrorOr<Updated>> UpdateAsync(int id, UserDTO entity)
     {
         if (!ValidateUser(entity))
         {
             throw new BadRequestException("Required fields cannot remain empty!");
         }
 
-        User currentEntity = await userRepository.GetByIdAsync(id);
+        User? currentEntity = await userRepository.GetByIdAsync(id);
+
+        if (currentEntity is null)
+        {
+            return ErrorPartials.User.UserNotFound($"User with id '{id}' not found!");
+        }
+
         entity.Password = currentEntity.Password;
 
         User user = mapper.Map<User>(entity);
         user.UpdatedAt = DateTime.UtcNow;
 
-        await userRepository.UpdateAsync(user);
+        return await userRepository.UpdateAsync(user);
     }
 
     public async Task<User?> UserValid(string emailOrUserName, string password)
     {
-        string currentEmailOrUserName = emailOrUserName.ToLower();
-
         User? user = await userRepository
             .Fetch()
             .AsNoTracking()
-            .SingleOrDefaultAsync(user => user.Email == currentEmailOrUserName
-            || user.UserName == currentEmailOrUserName);
+            .SingleOrDefaultAsync(user =>
+                string.Equals(user.Email, emailOrUserName, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(user.UserName, emailOrUserName, StringComparison.OrdinalIgnoreCase));
 
         if (user is not null && user.Password == HashHelper.Hash(user.Email, password))
             return user;

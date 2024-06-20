@@ -4,6 +4,7 @@ using CompanyManagementSystem.Core.Entities;
 using CompanyManagementSystem.Core.Exceptions;
 using CompanyManagementSystem.Core.Interfaces.Repositories.Base;
 using CompanyManagementSystem.Core.Interfaces.Services;
+using ErrorOr;
 
 namespace CompanyManagementSystem.Infrastructure.Services;
 
@@ -33,30 +34,35 @@ public class CompanyService(IBaseRepository<Company> companyRepository, IMapper 
         return mapper.Map<List<CompanyDTO>>(companies);
     }
 
-    public async Task<CompanyDTO> GetByIdAsync(int id)
+    public async Task<ErrorOr<CompanyDTO>> GetByIdAsync(int id)
     {
         Company? company = await companyRepository.GetByIdAsync(id, _ => _.Staff);
+
+        if (company is null)
+        {
+            return ErrorPartials.Company.CompanyNotFound($"Company with id '{id}' not found!");
+        }
 
         return mapper.Map<CompanyDTO>(company);
     }
 
-    public async Task UpdateAsync(int id, CompanyDTO entity)
+    public async Task<ErrorOr<Updated>> UpdateAsync(int id, CompanyDTO entity)
     {
         if (!ValidateCompany(entity))
         {
-            throw new BadRequestException("Required fields cannot remain empty!");
+            return ErrorPartials.Company.CompanyValidationFailed("Company data is incorrect.");
         }
 
         Company company = mapper.Map<Company>(entity);
         company.UpdatedAt = DateTime.UtcNow;
 
-        await companyRepository.UpdateAsync(company);
+        return await companyRepository.UpdateAsync(company);
     }
 
     #region Private methods
     private static bool ValidateCompany(CompanyDTO entity)
     {
-        return !string.IsNullOrEmpty(entity.Name);
+        return !string.IsNullOrEmpty(entity.Name) && entity.PTO > 0;
     }
     #endregion
 }

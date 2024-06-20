@@ -1,19 +1,19 @@
-﻿using CompanyManagementSystem.Core.DTOs;
-using CompanyManagementSystem.Core.DTOs.Input;
+﻿using CompanyManagementSystem.Core.DTOs.Input;
 using CompanyManagementSystem.Core.Interfaces.Services;
+using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace CompanyManagementSystem.Core.Commands.User;
 
-public class CreateUserCommand(RegisterInputModel registerInputModel) : IRequest<int>
+public class CreateUserCommand(RegisterInputModel registerInputModel) : IRequest<ErrorOr<int>>
 {
     public RegisterInputModel RegisterInputModel { get; set; } = registerInputModel;
 }
 
-public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, IUserService userService) : IRequestHandler<CreateUserCommand, int>
+public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, IUserService userService) : IRequestHandler<CreateUserCommand, ErrorOr<int>>
 {
-    public async Task<int> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<int>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -30,7 +30,7 @@ public class CreateUserCommandHandler(ILogger<CreateUserCommandHandler> logger, 
         {
             logger.LogError("Something went wrong when adding a user: {ex}", ex.Message);
 
-            throw;
+            return ErrorPartials.Unexpected.InternalServerError();
         }
     }
 }

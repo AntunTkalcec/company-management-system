@@ -1,30 +1,38 @@
-﻿using AutoMapper;
-using CompanyManagementSystem.Core.DTOs;
-using CompanyManagementSystem.Core.Exceptions;
+﻿using CompanyManagementSystem.Core.DTOs;
 using CompanyManagementSystem.Core.Interfaces.Services;
+using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace CompanyManagementSystem.Core.Commands.User;
 
-public class GetUserByIdQuery(int id) : IRequest<UserDTO>
+public class GetUserByIdQuery(int id) : IRequest<ErrorOr<UserDTO>>
 {
     public int Id { get; set; } = id;
 }
 
-public class GetUserByIdQueryHandler(ILogger<GetUserByIdQueryHandler> logger, IUserService userService) : IRequestHandler<GetUserByIdQuery, UserDTO>
+public class GetUserByIdQueryHandler(ILogger<GetUserByIdQueryHandler> logger, IUserService userService) : IRequestHandler<GetUserByIdQuery, ErrorOr<UserDTO>>
 {
-    public async Task<UserDTO> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<UserDTO>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-		try
-		{
-			return await userService.GetByIdAsync(request.Id) ?? throw new NotFoundException("That user does not exist.");
-		}
-		catch (Exception ex)
-		{
-			logger.LogError("Something went wrong retrieving a user by id: {ex}", ex.Message);
+        try
+        {
+            ErrorOr<UserDTO> userResult = await userService.GetByIdAsync(request.Id);
 
-			throw;
-		}
+            if (userResult.IsError)
+            {
+                logger.LogError("User with id '{id}' was not found!", request.Id);
+
+                return userResult.Errors;
+            }
+
+            return userResult.Value;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError("Something went wrong retrieving a user by id: {ex}", ex.Message);
+
+            return ErrorPartials.Unexpected.InternalServerError();
+        }
     }
 }

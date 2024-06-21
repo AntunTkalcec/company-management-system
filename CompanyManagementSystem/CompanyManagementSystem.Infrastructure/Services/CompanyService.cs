@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CompanyManagementSystem.Core.DTOs;
 using CompanyManagementSystem.Core.Entities;
-using CompanyManagementSystem.Core.Exceptions;
 using CompanyManagementSystem.Core.Interfaces.Repositories.Base;
 using CompanyManagementSystem.Core.Interfaces.Services;
 using ErrorOr;
@@ -10,11 +9,11 @@ namespace CompanyManagementSystem.Infrastructure.Services;
 
 public class CompanyService(IBaseRepository<Company> companyRepository, IMapper mapper) : ICompanyService
 {
-    public async Task<int> CreateAsync(CompanyDTO entity)
+    public async Task<ErrorOr<int>> CreateAsync(CompanyDTO entity)
     {
         if (!ValidateCompany(entity))
         {
-            throw new BadRequestException("Required fields cannot remain empty!");
+            return ErrorPartials.Company.CompanyValidationFailed("Company data is incorrect.");
         }
 
         await companyRepository.AddAsync(mapper.Map<Company>(entity));
@@ -22,9 +21,9 @@ public class CompanyService(IBaseRepository<Company> companyRepository, IMapper 
         return entity.Id;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task<ErrorOr<Deleted>> DeleteAsync(int id)
     {
-        await companyRepository.DeleteAsync(id);
+        return await companyRepository.DeleteAsync(id);
     }
 
     public async Task<List<CompanyDTO>> GetAllAsync()

@@ -2,7 +2,6 @@
 using CompanyManagementSystem.Core.Authentication;
 using CompanyManagementSystem.Core.DTOs;
 using CompanyManagementSystem.Core.Entities;
-using CompanyManagementSystem.Core.Exceptions;
 using CompanyManagementSystem.Core.Interfaces.Repositories.Base;
 using CompanyManagementSystem.Core.Interfaces.Services;
 using CompanyManagementSystem.Infrastructure.Authentication;
@@ -19,11 +18,11 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
 {
     private readonly TokenDataConfiguration _tokenDataConfiguration = tokenDataConfiguration.Value ?? throw new Exception("TokenDataConfiguration is null.");
 
-    public async Task<int> CreateAsync(UserDTO entity)
+    public async Task<ErrorOr<int>> CreateAsync(UserDTO entity)
     {
         if (!ValidateUser(entity))
         {
-            throw new BadRequestException("Required fields cannot remain empty!");
+            return ErrorPartials.User.UserValidationFailed("User data is incorrect.");
         }
 
         entity.Password = HashHelper.Hash(entity.Email, entity.Password);
@@ -66,11 +65,10 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
             new Claim("IsAdmin", user.IsAdmin.ToString())
         ];
 
-        AuthenticationInfo authInfo = new()
-        {
-            AccessToken = tokenService.GenerateJwt(claims, _tokenDataConfiguration.AccessTokenExpirationInMinutes),
-            RefreshToken = tokenService.GenerateJwt(claims, _tokenDataConfiguration.RefreshTokenExpirationInMinutes)
-        };
+        AuthenticationInfo authInfo = new(
+            AccessToken: tokenService.GenerateJwt(claims, _tokenDataConfiguration.AccessTokenExpirationInMinutes),
+            RefreshToken: tokenService.GenerateJwt(claims, _tokenDataConfiguration.RefreshTokenExpirationInMinutes));
+
         userDto.AuthenticationInfo = authInfo;
 
         return userDto;
@@ -80,7 +78,7 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
     {
         if (!ValidateUser(entity))
         {
-            throw new BadRequestException("Required fields cannot remain empty!");
+            return ErrorPartials.User.UserValidationFailed("User data is incorrect.");
         }
 
         User? currentEntity = await userRepository.GetByIdAsync(id);
@@ -103,9 +101,7 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
         User? user = await userRepository
             .Fetch()
             .AsNoTracking()
-            .SingleOrDefaultAsync(user =>
-                string.Equals(user.Email, emailOrUserName, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(user.UserName, emailOrUserName, StringComparison.OrdinalIgnoreCase));
+            .SingleOrDefaultAsync(user => user.Email == emailOrUserName || user.UserName == emailOrUserName);
 
         if (user is not null && user.Password == HashHelper.Hash(user.Email, password))
             return user;

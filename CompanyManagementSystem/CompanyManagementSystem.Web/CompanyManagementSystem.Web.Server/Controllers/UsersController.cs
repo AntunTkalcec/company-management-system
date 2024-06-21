@@ -7,6 +7,7 @@ using CompanyManagementSystem.Web.Server.Routes;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace CompanyManagementSystem.Web.Server.Controllers;
 

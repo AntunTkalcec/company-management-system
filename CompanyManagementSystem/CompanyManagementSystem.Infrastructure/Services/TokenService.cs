@@ -1,5 +1,6 @@
 ﻿using CompanyManagementSystem.Core.Interfaces.Services;
 using CompanyManagementSystem.Infrastructure.Authentication;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -8,7 +9,7 @@ using System.Text;
 
 namespace CompanyManagementSystem.Infrastructure.Services;
 
-public class TokenService(IOptions<TokenDataConfiguration> tokenDataConfiguration) : ITokenService
+public class TokenService(ILogger<TokenService> logger, IOptions<TokenDataConfiguration> tokenDataConfiguration) : ITokenService
 {
     private readonly TokenDataConfiguration _tokenDataConfiguration = tokenDataConfiguration.Value ?? throw new Exception("TokenDataConfiguration is null.");
     public string GenerateJwt(List<Claim> claims, int expirationInMinutes)
@@ -46,8 +47,10 @@ public class TokenService(IOptions<TokenDataConfiguration> tokenDataConfiguratio
 
             return null;
         }
-        catch
+        catch (Exception ex)
         {
+            logger.LogError("An error occurred in TokenService - {method}, Exception: {ex}", nameof(GetClaimsFromJwt), ex);
+
             return null;
         }
     }

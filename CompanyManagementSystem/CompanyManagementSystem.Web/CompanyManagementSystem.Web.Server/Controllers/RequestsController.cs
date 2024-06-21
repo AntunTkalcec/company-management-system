@@ -4,6 +4,7 @@ using CompanyManagementSystem.Core.DTOs.Input;
 using CompanyManagementSystem.Web.Server.ActionFilters;
 using CompanyManagementSystem.Web.Server.Controllers.Base;
 using CompanyManagementSystem.Web.Server.Routes;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,32 +15,57 @@ namespace CompanyManagementSystem.Web.Server.Controllers;
 public class RequestsController(IMediator mediator) : BaseController
 {
     [HttpGet(ApiRoutes.Requests.General.GetAll)]
-    [ProducesResponseType(typeof(List<RequestDTO>), 200)]
-    public async Task<ActionResult<List<RequestDTO>>> Get(CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
-        return Ok(await mediator.Send(new GetRequestListQuery(UserId), cancellationToken));
+        ErrorOr<List<RequestDTO>> requestsResult = await mediator.Send(new GetRequestListQuery(UserId), cancellationToken);
+
+        return requestsResult.Match(
+            Ok,
+            Problem);
     }
 
     [HttpGet(ApiRoutes.Requests.General.GetById)]
-    [ProducesResponseType(typeof(RequestDTO), 200)]
-    public async Task<ActionResult<RequestDTO>> GetById(int id, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        return Ok(await mediator.Send(new GetRequestByIdQuery(id), cancellationToken));
+        ErrorOr<RequestDTO> requestResult = await mediator.Send(new GetRequestByIdQuery(id), cancellationToken);
+
+        return requestResult.Match(
+            Ok,
+            Problem);
     }
 
     [HttpPost(ApiRoutes.Requests.General.Create)]
-    //[AdminFilter()]
-    public async Task<ActionResult> Post(RequestInputModel input, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<IActionResult> Post(RequestInputModel input, CancellationToken cancellationToken)
     {
-        return CreatedAtAction(nameof(Post), await mediator.Send(new CreateRequestCommand(input), cancellationToken));
+        ErrorOr<int> result = await mediator.Send(new CreateRequestCommand(input), cancellationToken);
+
+        return result.Match(
+            id => CreatedAtAction(nameof(GetById), id, null),
+            Problem);
     }
 
     [HttpPut(ApiRoutes.Requests.General.Update)]
-    //[AdminFilter()]
-    public async Task<ActionResult> Put(int id, RequestDTO requestDTO, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Put(int id, RequestDTO requestDTO, CancellationToken cancellationToken)
     {
-        await mediator.Send(new UpdateRequestCommand(id, requestDTO), cancellationToken);
+        ErrorOr<Updated> result = await mediator.Send(new UpdateRequestCommand(id, requestDTO), cancellationToken);
 
-        return NoContent();
+        return result.Match(
+            updated => NoContent(),
+            Problem);
+    }
+
+    [HttpDelete(ApiRoutes.Requests.General.Delete)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        ErrorOr<Deleted> result = await mediator.Send(new DeleteRequestCommand(id), cancellationToken);
+
+        return result.Match(
+            deleted => NoContent(),
+            Problem);
     }
 }

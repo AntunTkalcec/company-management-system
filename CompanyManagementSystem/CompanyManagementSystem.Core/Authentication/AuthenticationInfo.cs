@@ -1,8 +1,3 @@
 ﻿namespace CompanyManagementSystem.Core.Authentication;
 
-public class AuthenticationInfo
-{
-    public string AccessToken { get; set; }
-
-    public string RefreshToken { get; set; }
-}
+public record AuthenticationInfo(string AccessToken, string RefreshToken);

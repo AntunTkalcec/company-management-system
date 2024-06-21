@@ -9,7 +9,7 @@ public interface IBaseService<T> where T : BaseDTO
 
     Task<ErrorOr<T>> GetByIdAsync(int id);
 
-    Task<int> CreateAsync(T entity);
+    Task<ErrorOr<int>> CreateAsync(T entity);
 
     Task<ErrorOr<Updated>> UpdateAsync(int id, T entity);
 

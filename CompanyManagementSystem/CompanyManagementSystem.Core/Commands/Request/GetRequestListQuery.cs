@@ -1,34 +1,44 @@
 ﻿using CompanyManagementSystem.Core.DTOs;
-using CompanyManagementSystem.Core.Exceptions;
 using CompanyManagementSystem.Core.Interfaces.Services;
+using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace CompanyManagementSystem.Core.Commands.Request;
 
-public class GetRequestListQuery(int userId) : IRequest<List<RequestDTO>>
+public class GetRequestListQuery(int userId) : IRequest<ErrorOr<List<RequestDTO>>>
 {
-	public int UserId { get; set; } = userId;
+    public int UserId { get; set; } = userId;
 }
 
-public class GetRequestListQueryHandler(ILogger<GetRequestListQueryHandler> logger, IRequestService requestService, IUserService userService) 
-	: IRequestHandler<GetRequestListQuery, List<RequestDTO>>
+public class GetRequestListQueryHandler(ILogger<GetRequestListQueryHandler> logger, IRequestService requestService, IUserService userService)
+    : IRequestHandler<GetRequestListQuery, ErrorOr<List<RequestDTO>>>
 {
-    public async Task<List<RequestDTO>> Handle(GetRequestListQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<RequestDTO>>> Handle(GetRequestListQuery request, CancellationToken cancellationToken)
     {
-		try
-		{
-			UserDTO user = await userService.GetByIdAsync(request.UserId);
+        try
+        {
+            ErrorOr<UserDTO> userResult = await userService.GetByIdAsync(request.UserId);
 
-            return user.CompanyId is null
-                ? throw new NotPartOfCompanyException("Cannot retrieve any requests as you are not part of a company.")
-                : await requestService.GetUnacceptedForCompany((int)user.CompanyId);
+            if (userResult.IsError)
+            {
+                logger.LogError("User with id '{id}' was not found!", request.UserId);
+
+                return userResult.Errors;
+            }
+
+            if (userResult.Value.CompanyId is null)
+            {
+                return ErrorPartials.User.UserNotPartOfCompany("Cannot get requests because you are not part of a company.");
+            }
+
+            return await requestService.GetUnacceptedForCompany((int)userResult.Value.CompanyId);
         }
         catch (Exception ex)
-		{
-			logger.LogError("Something went wrong retrieving requests: {ex}", ex.Message);
+        {
+            logger.LogError("Something went wrong retrieving requests: {ex}", ex.Message);
 
-			throw;
-		}
+            return ErrorPartials.Unexpected.InternalServerError();
+        }
     }
 }

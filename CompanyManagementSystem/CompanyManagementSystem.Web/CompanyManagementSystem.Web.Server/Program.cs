@@ -4,7 +4,6 @@ using CompanyManagementSystem.Infrastructure.Authentication;
 using Microsoft.OpenApi.Models;
 using CompanyManagementSystem.Infrastructure.Extensions;
 using CompanyManagementSystem.Core.Interfaces.Seed;
-using CompanyManagementSystem.Core.Exceptions;
 using Microsoft.Net.Http.Headers;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -66,8 +65,6 @@ builder.Services.AddDbContext(builder.Configuration.GetConnectionString("LocalCo
 builder.Services.RegisterServices();
 
 builder.Services.Configure<TokenDataConfiguration>(builder.Configuration.GetSection("TokenData"));
-
-builder.Services.AddExceptionHandler<AppExceptionHandler>();
 
 WebApplication app = builder.Build();
 

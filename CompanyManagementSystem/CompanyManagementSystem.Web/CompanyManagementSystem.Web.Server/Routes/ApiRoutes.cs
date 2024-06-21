@@ -39,6 +39,8 @@ public static class ApiRoutes
             public const string Create = Prefix;
 
             public const string Update = Base;
+
+            public const string Delete = Base;
         }
     }
 

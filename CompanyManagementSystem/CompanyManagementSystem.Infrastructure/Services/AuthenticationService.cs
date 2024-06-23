@@ -2,13 +2,14 @@
 using CompanyManagementSystem.Core.DTOs;
 using CompanyManagementSystem.Core.Entities;
 using CompanyManagementSystem.Core.Interfaces.Services;
+using ErrorOr;
 using System.Security.Claims;
 
 namespace CompanyManagementSystem.Infrastructure.Services;
 
 public class AuthenticationService(IUserService userService, IMapper mapper) : IAuthenticationService
 {
-    public async Task<UserDTO?> RefreshTokenAsync(List<Claim> claims)
+    public async Task<ErrorOr<UserDTO>> RefreshTokenAsync(List<Claim> claims)
     {
         if (claims is not null)
         {
@@ -16,18 +17,24 @@ public class AuthenticationService(IUserService userService, IMapper mapper) : I
             
             if (userClaim is not null)
             {
-                User user = mapper.Map<User>(await userService.GetByIdAsync(int.Parse(userClaim.Value)));
-
-                if (user is not null)
+                if (int.TryParse(userClaim.Value, out int userId))
                 {
-                    UserDTO userDto = userService.Login(user);
-                    return userDto;
+                    ErrorOr<UserDTO> userDtoResult = await userService.GetByIdAsync(userId);
+
+                    if (userDtoResult.IsError)
+                    {
+                        return ErrorPartials.User.UserNotFound($"Could not find user with id {userId}.");
+                    }
+
+                    User user = mapper.Map<User>(userDtoResult.Value);
+
+                    return userService.Login(user).Value;
                 }
 
-                return null;
+                return ErrorPartials.Auth.RefreshTokenFailure("Something went wrong refreshing the access token.");
             }
         }
 
-        return null;
+        return ErrorPartials.Auth.RefreshTokenFailure("Something went wrong refreshing the access token.");
     }
 }

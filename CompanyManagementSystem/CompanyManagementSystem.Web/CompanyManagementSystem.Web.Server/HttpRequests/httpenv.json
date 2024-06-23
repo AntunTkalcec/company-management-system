@@ -1,0 +1,7 @@
+{
+  "dev": {
+    "CMS_API_Address": "localhost:5236",
+    // an example, won't work as it lasts for 10 hours. use Swagger or Postman to get a new access token
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiIxIiwiSXNBZG1pbiI6IlRydWUiLCJuYmYiOjE3MTkxNjUwMTcsImV4cCI6MTcxOTc2OTgxNywiaXNzIjoiQ29tcGFueU1hbmFnZW1lbnRTeXN0ZW0iLCJhdWQiOiJDb21wYW55TWFuYWdlbWVudFN5c3RlbSJ9.c3tCVpt-XNEjOPt_dwq9xF9U3TTiWkTQUZcIJkA90NA"
+  }
+}

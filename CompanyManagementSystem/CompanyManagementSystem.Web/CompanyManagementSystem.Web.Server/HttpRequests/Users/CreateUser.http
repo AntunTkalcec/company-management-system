@@ -1,0 +1,11 @@
+POST http://{{CMS_API_Address}}/api/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "email": "test@http.file",
+  "username": "httptester",
+  "firstName": "http",
+  "lastName": "tester",
+  "password": "Password123!"
+}

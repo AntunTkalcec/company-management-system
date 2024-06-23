@@ -1,0 +1,15 @@
+PUT http://{{CMS_API_Address}}/api/users/7
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": 7,
+  "email": "test@http.file",
+  "username": "httptester",
+  "firstName": "http",
+  "lastName": "tester",
+  "password": "Password123!",
+  "timeOffCount": 10,
+  "salary": 2400,
+  "isOnLeave": true
+}

@@ -24,5 +24,5 @@ public interface IBaseRepository<T> where T : BaseEntity
 
     Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes);
 
-    Task<T> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes);
+    Task<T?> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes);
 }

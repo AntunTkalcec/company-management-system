@@ -7,12 +7,11 @@ using CompanyManagementSystem.Web.Server.Routes;
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
 
 namespace CompanyManagementSystem.Web.Server.Controllers;
 
 [ApiController]
-//[AuthorizationFilter()]
+[AuthorizationFilter()]
 public class UsersController(IMediator mediator) : BaseController
 {
     [HttpGet(ApiRoutes.Users.General.GetAll)]
@@ -44,7 +43,7 @@ public class UsersController(IMediator mediator) : BaseController
         ErrorOr<int> result = await mediator.Send(new CreateUserCommand(registerInputModel), cancellationToken);
 
         return result.Match(
-            id => CreatedAtAction(nameof(GetById), id, null),
+            id => CreatedAtAction(nameof(GetById), new { id }, null),
             Problem);
     }
 
@@ -61,7 +60,7 @@ public class UsersController(IMediator mediator) : BaseController
 
     [HttpDelete(ApiRoutes.Users.General.Delete)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    //[AdminFilter()]
+    [AdminFilter()]
     public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         ErrorOr<Deleted> result = await mediator.Send(new DeleteUserCommand(id), cancellationToken);
@@ -73,7 +72,7 @@ public class UsersController(IMediator mediator) : BaseController
 
     [HttpPatch(ApiRoutes.Users.General.SetAdmin)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    //[AdminFilter()]
+    [AdminFilter()]
     public async Task<IActionResult> SetAdmin(int id, CancellationToken cancellationToken)
     {
         ErrorOr<Updated> result = await mediator.Send(new SetUserAsAdminCommand(id), cancellationToken);

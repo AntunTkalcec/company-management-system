@@ -1,0 +1,3 @@
+DELETE http://{{CMS_API_Address}}/api/users/7
+Authorization: Bearer {{token}}
+Accept: application/json

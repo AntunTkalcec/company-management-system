@@ -6,5 +6,7 @@ public interface ITokenService
 {
     string GenerateJwt(List<Claim> claims, int expirationInMinutes);
 
-    List<Claim> GetClaimsFromJwt(string jwt);
+    List<Claim>? GetClaimsFromJwt(string jwt);
+
+    bool IsRefreshTokenValid(string refreshToken);
 }

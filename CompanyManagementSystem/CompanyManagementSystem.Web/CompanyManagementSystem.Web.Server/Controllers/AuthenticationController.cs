@@ -1,50 +1,36 @@
 ﻿using CompanyManagementSystem.Core.Authentication;
+using CompanyManagementSystem.Core.Commands.Auth;
 using CompanyManagementSystem.Core.DTOs;
-using CompanyManagementSystem.Core.Entities;
-using CompanyManagementSystem.Core.Interfaces.Services;
-using CompanyManagementSystem.Infrastructure.Helpers;
 using CompanyManagementSystem.Web.Server.Controllers.Base;
+using CompanyManagementSystem.Web.Server.Routes;
+using ErrorOr;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace CompanyManagementSystem.Web.Server.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
-public class AuthenticationController(IUserService userService, ITokenService tokenService, IAuthenticationService authenticationService) : BaseController
+public class AuthenticationController(IMediator mediator) : BaseController
 {
-    [HttpPost("login")]
-    public async Task<ActionResult<UserDTO>> Login(UserLogin userLogin)
+    [HttpPost(ApiRoutes.Auth.General.Login)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Login(UserLogin userLogin)
     {
-        try
-        {
-            User? user = await userService.UserValid(userLogin.EmailOrUserName, userLogin.Password);
+        ErrorOr<UserDTO> userResult = await mediator.Send(new LoginCommand(userLogin));
 
-            if (user is not null)
-            {
-                UserDTO userDto = userService.Login(user);
-
-                return Ok(userDto);
-            }
-            return NotFound(new ApiResponseHelper(404, "A user with that information does not exist!"));
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(new ApiResponseHelper(400, ex.Message));
-        }
+        return userResult.Match(
+            Ok,
+            Problem);
     }
 
-    [HttpPost("token/refresh")]
-    public async Task<ActionResult<UserDTO>> RefreshToken([FromBody] string refreshToken)
+    [HttpPost(ApiRoutes.Auth.General.RefreshToken)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
     {
-        List<Claim> claims = tokenService.GetClaimsFromJwt(refreshToken);
-        UserDTO? userDto = await authenticationService.RefreshTokenAsync(claims);
+        ErrorOr<UserDTO> userDtoResult = await mediator.Send(new RefreshTokenCommand(refreshToken));
 
-        if (userDto is not null)
-        {
-            return Ok(userDto);
-        }
-
-        return Unauthorized();
+        return userDtoResult.Match(
+            Ok,
+            Problem);
     }
 }

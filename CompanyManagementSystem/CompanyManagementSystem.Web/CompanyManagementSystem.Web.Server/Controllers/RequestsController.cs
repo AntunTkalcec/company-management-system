@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CompanyManagementSystem.Web.Server.Controllers;
 
 [ApiController]
-//[AuthorizationFilter()]
+[AuthorizationFilter()]
 public class RequestsController(IMediator mediator) : BaseController
 {
     [HttpGet(ApiRoutes.Requests.General.GetAll)]

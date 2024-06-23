@@ -55,23 +55,28 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
         return mapper.Map<UserDTO>(user);
     }
 
-    public UserDTO Login(User user)
+    public ErrorOr<UserDTO> Login(User user)
     {
-        UserDTO userDto = mapper.Map<UserDTO>(user);
+        try
+        {
+            UserDTO userDto = mapper.Map<UserDTO>(user);
 
-        List<Claim> claims =
-        [
-            new Claim("UserId", user.Id.ToString()),
-            new Claim("IsAdmin", user.IsAdmin.ToString())
-        ];
+            List<Claim> claims =
+            [
+                new("UserId", user.Id.ToString()),
+                new("IsAdmin", user.IsAdmin.ToString())
+            ];
 
-        AuthenticationInfo authInfo = new(
-            AccessToken: tokenService.GenerateJwt(claims, _tokenDataConfiguration.AccessTokenExpirationInMinutes),
-            RefreshToken: tokenService.GenerateJwt(claims, _tokenDataConfiguration.RefreshTokenExpirationInMinutes));
+            userDto.AuthenticationInfo = new(
+                AccessToken: tokenService.GenerateJwt(claims, _tokenDataConfiguration.AccessTokenExpirationInMinutes),
+                RefreshToken: tokenService.GenerateJwt(claims, _tokenDataConfiguration.RefreshTokenExpirationInMinutes));
 
-        userDto.AuthenticationInfo = authInfo;
-
-        return userDto;
+            return userDto;
+        }
+        catch (Exception)
+        {
+            return ErrorPartials.Unexpected.InternalServerError();
+        }
     }
 
     public async Task<ErrorOr<Updated>> UpdateAsync(int id, UserDTO entity)
@@ -96,7 +101,7 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
         return await userRepository.UpdateAsync(user);
     }
 
-    public async Task<User?> UserValid(string emailOrUserName, string password)
+    public async Task<ErrorOr<User>> UserValid(string emailOrUserName, string password)
     {
         User? user = await userRepository
             .Fetch()
@@ -106,7 +111,7 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
         if (user is not null && user.Password == HashHelper.Hash(user.Email, password))
             return user;
 
-        return null;
+        return ErrorPartials.User.UserNotFound($"User with that information does not exist.");
     }
 
     #region Private methods

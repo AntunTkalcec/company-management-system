@@ -5,11 +5,12 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ErrorOr;
 using CompanyManagementSystem.Web.Server.Routes;
+using CompanyManagementSystem.Web.Server.ActionFilters;
 
 namespace CompanyManagementSystem.Web.Server.Controllers;
 
 [ApiController]
-//[AuthorizationFilter()]
+[AuthorizationFilter()]
 public class CompaniesController(IMediator mediator) : BaseController
 {
     [HttpGet(ApiRoutes.Companies.General.GetAll)]
@@ -36,7 +37,7 @@ public class CompaniesController(IMediator mediator) : BaseController
 
     [HttpPost(ApiRoutes.Companies.General.Create)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    //[AdminFilter()]
+    [AdminFilter()]
     public async Task<IActionResult> Post(CompanyDTO companyDTO, CancellationToken cancellationToken)
     {
         ErrorOr<int> result = await mediator.Send(new CreateCompanyCommand(companyDTO), cancellationToken);
@@ -48,7 +49,7 @@ public class CompaniesController(IMediator mediator) : BaseController
 
     [HttpPut(ApiRoutes.Companies.General.Update)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    //[AdminFilter()]
+    [AdminFilter()]
     public async Task<IActionResult> Put(int id, CompanyDTO companyDTO, CancellationToken cancellationToken)
     {
         ErrorOr<Updated> result = await mediator.Send(new UpdateCompanyCommand(id, companyDTO), cancellationToken);

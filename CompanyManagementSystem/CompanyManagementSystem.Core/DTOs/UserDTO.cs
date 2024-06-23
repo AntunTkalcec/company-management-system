@@ -24,7 +24,7 @@ public class UserDTO : BaseDTO
     [RegularExpression(@"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$", ErrorMessage = "Need 6-20 characters, 1 uppercase letter, 1 lowercase letter and 1 number.")]
     public string Password { get; set; }
 
-    public AuthenticationInfo AuthenticationInfo { get; set; }
+    public AuthenticationInfo? AuthenticationInfo { get; set; }
 
     public bool IsAdmin { get; set; }
 
@@ -37,8 +37,9 @@ public class UserDTO : BaseDTO
 
     #region Relations
     public int? CompanyId { get; set; }
-    public CompanyDTO Company { get; set; }
 
-    public List<RequestDTO> Requests { get; set; }
+    public CompanyDTO? Company { get; set; }
+
+    public List<RequestDTO>? Requests { get; set; }
     #endregion
 }

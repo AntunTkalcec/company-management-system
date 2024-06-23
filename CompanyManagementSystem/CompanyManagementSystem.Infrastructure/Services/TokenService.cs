@@ -12,6 +12,32 @@ namespace CompanyManagementSystem.Infrastructure.Services;
 public class TokenService(ILogger<TokenService> logger, IOptions<TokenDataConfiguration> tokenDataConfiguration) : ITokenService
 {
     private readonly TokenDataConfiguration _tokenDataConfiguration = tokenDataConfiguration.Value ?? throw new Exception("TokenDataConfiguration is null.");
+
+    public bool IsRefreshTokenValid(string refreshToken)
+    {
+        JwtSecurityTokenHandler handler = new();
+
+        if (!handler.CanReadToken(refreshToken))
+        {
+            return false;
+        }
+
+        if (handler.ReadToken(refreshToken) is not JwtSecurityToken token)
+        {
+            return false;
+        }
+
+        Claim? expireClaim = token.Claims.FirstOrDefault(claim => claim.Type is JwtRegisteredClaimNames.Exp);
+        if (expireClaim is null)
+        {
+            return false;
+        }
+
+        DateTime expireTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expireClaim.Value)).UtcDateTime;
+
+        return expireTime >= DateTime.UtcNow;
+    }
+
     public string GenerateJwt(List<Claim> claims, int expirationInMinutes)
     {
         DateTime now = DateTime.UtcNow;

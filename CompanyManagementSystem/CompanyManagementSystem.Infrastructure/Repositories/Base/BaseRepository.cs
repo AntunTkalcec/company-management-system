@@ -55,7 +55,7 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
     {
         if (entity is null)
         {
-            return ErrorPartials.Generic.EntityIsNull($"The '{nameof(T)}' entity cannot be null.");
+            return ErrorPartials.Generic.EntityIsNull($"The entity cannot be null.");
         }
 
         return await DeleteAsync(entity.Id);
@@ -63,11 +63,11 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
 
     public async Task<ErrorOr<Deleted>> DeleteAsync(int id)
     {
-        T? entity = _entities.Find(id) ?? throw new ArgumentNullException(nameof(id), "Couldn't find entity with given id.");
+        T? entity = _entities.Find(id);
 
         if (entity is null)
         {
-            return ErrorPartials.Generic.EntityNotFound($"Couldn't find '{nameof(T)}' entity with given id.");
+            return ErrorPartials.Generic.EntityNotFound($"Couldn't find entity with given id.");
         }
 
         _entities.Remove(entity);
@@ -86,7 +86,7 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         return await SetIncludes(includes).AsSplitQuery().AsNoTracking().ToListAsync();
     }
 
-    public async Task<T> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes)
+    public async Task<T?> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes)
     {
         return await FirstAsync(x => x.Id == id, includes);
     }
@@ -99,7 +99,7 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
 
         if (existing is null)
         {
-            return ErrorPartials.Generic.EntityNotFound($"{nameof(T)} with id '{entity.Id}' does not exist.");
+            return ErrorPartials.Generic.EntityNotFound($"Entity with id '{entity.Id}' does not exist.");
         }
 
         _context.Entry(existing).CurrentValues.SetValues(entity);
@@ -116,7 +116,7 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         await SaveChangesAsync();
     }
 
-    public async Task<T> FirstAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
+    public async Task<T?> FirstAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
     {
         return await SetIncludes(includes).FirstOrDefaultAsync(predicate);
     }

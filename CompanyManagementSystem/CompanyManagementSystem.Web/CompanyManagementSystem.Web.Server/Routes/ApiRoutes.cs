@@ -2,6 +2,17 @@
 
 public static class ApiRoutes
 {
+    public static class Auth
+    {
+        private const string Prefix = "api/authentication";
+
+        public static class General
+        {
+            public const string Login = Prefix + "/login";
+
+            public const string RefreshToken = Prefix + "/token/refresh";
+        }
+    }
     public static class Users
     {
         private const string Prefix = "api/users";

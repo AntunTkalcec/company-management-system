@@ -66,12 +66,7 @@ public class TokenService(ILogger<TokenService> logger, IOptions<TokenDataConfig
             handler.ValidateToken(jwt, TokenValidationConfiguration.GetTokenValidationParameters(_tokenDataConfiguration.Issuer,
                 _tokenDataConfiguration.Audience, _tokenDataConfiguration.SecretKey), out SecurityToken securityToken);
 
-            if (securityToken is JwtSecurityToken jwtSecurityToken)
-            {
-                return jwtSecurityToken?.Claims?.ToList();
-            }
-
-            return null;
+            return securityToken is JwtSecurityToken jwtSecurityToken ? jwtSecurityToken?.Claims?.ToList() : null;
         }
         catch (Exception ex)
         {

@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Text.Json.Serialization;
-using CompanyManagementSystem.Infrastructure.Authentication;
-using Microsoft.OpenApi.Models;
-using CompanyManagementSystem.Infrastructure.Extensions;
 using CompanyManagementSystem.Core.Interfaces.Seed;
+using CompanyManagementSystem.Infrastructure.Authentication;
+using CompanyManagementSystem.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

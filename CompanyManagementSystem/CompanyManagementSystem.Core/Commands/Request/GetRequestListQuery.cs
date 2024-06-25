@@ -27,12 +27,9 @@ public class GetRequestListQueryHandler(ILogger<GetRequestListQueryHandler> logg
                 return userResult.Errors;
             }
 
-            if (userResult.Value.CompanyId is null)
-            {
-                return ErrorPartials.User.UserNotPartOfCompany("Cannot get requests because you are not part of a company.");
-            }
-
-            return await requestService.GetUnacceptedForCompany((int)userResult.Value.CompanyId);
+            return userResult.Value.CompanyId is null
+                ? ErrorPartials.User.UserNotPartOfCompany("Cannot get requests because you are not part of a company.")
+                : await requestService.GetUnacceptedForCompany((int)userResult.Value.CompanyId);
         }
         catch (Exception ex)
         {

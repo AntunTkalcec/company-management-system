@@ -3,7 +3,6 @@ using CompanyManagementSystem.Core.Interfaces.Repositories.Base;
 using CompanyManagementSystem.Infrastructure.Database;
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Net;
 using System.Web.Http;
@@ -21,7 +20,7 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         {
             await _context.SaveChangesAsync();
         }
-        catch (Exception _)
+        catch (Exception)
         {
             throw new HttpResponseException(HttpStatusCode.InternalServerError);
         }
@@ -51,15 +50,7 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         await SaveChangesAsync();
     }
 
-    public async Task<ErrorOr<Deleted>> DeleteAsync(T entity)
-    {
-        if (entity is null)
-        {
-            return ErrorPartials.Generic.EntityIsNull($"The entity cannot be null.");
-        }
-
-        return await DeleteAsync(entity.Id);
-    }
+    public async Task<ErrorOr<Deleted>> DeleteAsync(T entity) => entity is null ? ErrorPartials.Generic.EntityIsNull($"The entity cannot be null.") : await DeleteAsync(entity.Id);
 
     public async Task<ErrorOr<Deleted>> DeleteAsync(int id)
     {
@@ -76,20 +67,11 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         return Result.Deleted;
     }
 
-    public IQueryable<T> Fetch()
-    {
-        return _entities;
-    }
+    public IQueryable<T> Fetch() => _entities;
 
-    public async Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes)
-    {
-        return await SetIncludes(includes).AsSplitQuery().AsNoTracking().ToListAsync();
-    }
+    public async Task<List<T>> GetAllAsync(params Expression<Func<T, object>>[] includes) => await SetIncludes(includes).AsSplitQuery().AsNoTracking().ToListAsync();
 
-    public async Task<T?> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes)
-    {
-        return await FirstAsync(x => x.Id == id, includes);
-    }
+    public async Task<T?> GetByIdAsync(int id, params Expression<Func<T, object>>[] includes) => await FirstAsync(x => x.Id == id, includes);
 
     public async Task<ErrorOr<Updated>> UpdateAsync(T entity)
     {
@@ -116,10 +98,7 @@ public abstract class BaseRepository<T>(CompanyManagementSystemDBContext context
         await SaveChangesAsync();
     }
 
-    public async Task<T?> FirstAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
-    {
-        return await SetIncludes(includes).FirstOrDefaultAsync(predicate);
-    }
+    public async Task<T?> FirstAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes) => await SetIncludes(includes).FirstOrDefaultAsync(predicate);
 
     protected IQueryable<T> SetIncludes(params Expression<Func<T, object>>[] includes)
     {

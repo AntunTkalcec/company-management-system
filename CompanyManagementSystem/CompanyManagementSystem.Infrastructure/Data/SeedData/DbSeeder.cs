@@ -7,7 +7,7 @@ public static class DbSeeder
 {
     public static readonly List<Company> Companies =
         [
-            new Company 
+            new Company
             {
                 Name = "Facebook",
                 PTO = 24

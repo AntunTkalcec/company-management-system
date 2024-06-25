@@ -21,10 +21,7 @@ public class CompanyService(IBaseRepository<Company> companyRepository, IMapper 
         return entity.Id;
     }
 
-    public async Task<ErrorOr<Deleted>> DeleteAsync(int id)
-    {
-        return await companyRepository.DeleteAsync(id);
-    }
+    public async Task<ErrorOr<Deleted>> DeleteAsync(int id) => await companyRepository.DeleteAsync(id);
 
     public async Task<List<CompanyDTO>> GetAllAsync()
     {
@@ -37,12 +34,9 @@ public class CompanyService(IBaseRepository<Company> companyRepository, IMapper 
     {
         Company? company = await companyRepository.GetByIdAsync(id, _ => _.Staff);
 
-        if (company is null)
-        {
-            return ErrorPartials.Company.CompanyNotFound($"Company with id '{id}' not found!");
-        }
-
-        return mapper.Map<CompanyDTO>(company);
+        return company is null
+            ? ErrorPartials.Company.CompanyNotFound($"Company with id '{id}' not found!")
+            : mapper.Map<CompanyDTO>(company);
     }
 
     public async Task<ErrorOr<Updated>> UpdateAsync(int id, CompanyDTO entity)
@@ -59,9 +53,6 @@ public class CompanyService(IBaseRepository<Company> companyRepository, IMapper 
     }
 
     #region Private methods
-    private static bool ValidateCompany(CompanyDTO entity)
-    {
-        return !string.IsNullOrEmpty(entity.Name) && entity.PTO > 0;
-    }
+    private static bool ValidateCompany(CompanyDTO entity) => !string.IsNullOrEmpty(entity.Name) && entity.PTO > 0;
     #endregion
 }

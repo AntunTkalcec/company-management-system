@@ -14,7 +14,7 @@ public class AuthenticationService(IUserService userService, IMapper mapper) : I
         if (claims is not null)
         {
             Claim? userClaim = claims.SingleOrDefault(c => c.Type == "UserId");
-            
+
             if (userClaim is not null)
             {
                 if (int.TryParse(userClaim.Value, out int userId))

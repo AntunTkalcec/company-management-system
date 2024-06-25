@@ -1,11 +1,11 @@
 ﻿using CompanyManagementSystem.Core.Commands.Company;
 using CompanyManagementSystem.Core.DTOs;
+using CompanyManagementSystem.Web.Server.ActionFilters;
 using CompanyManagementSystem.Web.Server.Controllers.Base;
+using CompanyManagementSystem.Web.Server.Routes;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ErrorOr;
-using CompanyManagementSystem.Web.Server.Routes;
-using CompanyManagementSystem.Web.Server.ActionFilters;
 
 namespace CompanyManagementSystem.Web.Server.Controllers;
 

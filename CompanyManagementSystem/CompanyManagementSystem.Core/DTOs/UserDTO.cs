@@ -1,6 +1,5 @@
 ﻿using CompanyManagementSystem.Core.Authentication;
 using CompanyManagementSystem.Core.DTOs.Base;
-using CompanyManagementSystem.Core.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace CompanyManagementSystem.Core.DTOs;

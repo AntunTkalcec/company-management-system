@@ -14,7 +14,7 @@ public class AdminFilter : ActionFilterAttribute
 
         if (isAdmin is null)
             context.Result = new ForbidResult();
-        
+
         if (isAdmin?.Value != string.Empty)
         {
             if (isAdmin?.Value is "True")

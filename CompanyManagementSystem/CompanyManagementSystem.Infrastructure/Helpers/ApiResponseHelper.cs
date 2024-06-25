@@ -1,5 +1,4 @@
-﻿using Grpc.Core;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace CompanyManagementSystem.Infrastructure.Helpers;
 

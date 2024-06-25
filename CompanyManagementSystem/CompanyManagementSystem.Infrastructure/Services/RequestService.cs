@@ -17,10 +17,7 @@ public class RequestService(IBaseRepository<Request> requestRepository, IMapper 
         return entity.Id;
     }
 
-    public async Task<ErrorOr<Deleted>> DeleteAsync(int id)
-    {
-        return await requestRepository.DeleteAsync(id);
-    }
+    public async Task<ErrorOr<Deleted>> DeleteAsync(int id) => await requestRepository.DeleteAsync(id);
 
     public async Task<List<RequestDTO>> GetAllAsync()
     {
@@ -33,12 +30,9 @@ public class RequestService(IBaseRepository<Request> requestRepository, IMapper 
     {
         Request? request = await requestRepository.GetByIdAsync(id);
 
-        if (request is null)
-        {
-            return ErrorPartials.Request.RequestNotFound($"Request with id '{id}' not found!");
-        }
-
-        return mapper.Map<RequestDTO>(request);
+        return request is null
+            ? ErrorPartials.Request.RequestNotFound($"Request with id '{id}' not found!")
+            : mapper.Map<RequestDTO>(request);
     }
 
     public async Task<List<RequestDTO>> GetUnacceptedForCompany(int companyId)

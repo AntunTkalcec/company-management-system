@@ -1,5 +1,4 @@
 ﻿using CompanyManagementSystem.Core.DTOs.Base;
-using CompanyManagementSystem.Core.Entities;
 
 namespace CompanyManagementSystem.Core.DTOs;
 

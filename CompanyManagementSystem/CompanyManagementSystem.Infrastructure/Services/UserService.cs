@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CompanyManagementSystem.Core.Authentication;
 using CompanyManagementSystem.Core.DTOs;
 using CompanyManagementSystem.Core.Entities;
 using CompanyManagementSystem.Core.Interfaces.Repositories.Base;
@@ -31,10 +30,7 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
         return entity.Id;
     }
 
-    public async Task<ErrorOr<Deleted>> DeleteAsync(int id)
-    {
-        return await userRepository.DeleteAsync(id);
-    }
+    public async Task<ErrorOr<Deleted>> DeleteAsync(int id) => await userRepository.DeleteAsync(id);
 
     public async Task<List<UserDTO>> GetAllAsync()
     {
@@ -47,12 +43,7 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
     {
         User? user = await userRepository.GetByIdAsync(id, _ => _.Company);
 
-        if (user is null)
-        {
-            return ErrorPartials.User.UserNotFound($"User with id '{id}' not found!");
-        }
-
-        return mapper.Map<UserDTO>(user);
+        return user is null ? (ErrorOr<UserDTO>)ErrorPartials.User.UserNotFound($"User with id '{id}' not found!") : (ErrorOr<UserDTO>)mapper.Map<UserDTO>(user);
     }
 
     public ErrorOr<UserDTO> Login(User user)
@@ -108,19 +99,15 @@ public class UserService(IBaseRepository<User> userRepository, IBaseRepository<C
             .AsNoTracking()
             .SingleOrDefaultAsync(user => user.Email == emailOrUserName || user.UserName == emailOrUserName);
 
-        if (user is not null && user.Password == HashHelper.Hash(user.Email, password))
-            return user;
-
-        return ErrorPartials.User.UserNotFound($"User with that information does not exist.");
+        return user is not null && user.Password == HashHelper.Hash(user.Email, password)
+            ? user
+            : ErrorPartials.User.UserNotFound($"User with that information does not exist.");
     }
 
     #region Private methods
-    private static bool ValidateUser(UserDTO entity)
-    {
-        return !string.IsNullOrEmpty(entity.FirstName) &&
+    private static bool ValidateUser(UserDTO entity) => !string.IsNullOrEmpty(entity.FirstName) &&
         !string.IsNullOrEmpty(entity.LastName) &&
         !string.IsNullOrEmpty(entity.UserName) &&
         !string.IsNullOrEmpty(entity.Email);
-    }
     #endregion
 }
